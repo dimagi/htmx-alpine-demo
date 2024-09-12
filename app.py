@@ -16,15 +16,13 @@ def index():
 
 @app.route("/edit/<int:item_id>", methods=["GET", "POST"])
 def edit_item(item_id):
-    item_to_edit = get_item(item_id)
     template = "edit_item.html"
 
     if request.method == "POST":
         template = "item.html"
-        new_name = request.form.get("name")
-        if new_name and item_to_edit:
-            item_to_edit["name"] = new_name
+        update_item(item_id, request)
 
+    item_to_edit = get_item(item_id)
     return render_template(template, item=item_to_edit)
 
 
@@ -36,19 +34,21 @@ def alpine_index():
 @app.route("/alpine/update", methods=["POST"])
 def alpline_update_item():
     item_id = int(request.form["id"])
-    new_name = request.form["name"]
     
-    # Update the item in our list
-    for item in items:
-        if item["id"] == item_id:
-            item["name"] = new_name
-            break
+    update_item(item_id, request)
     
-    return jsonify({"success": True, "name": new_name})
+    return jsonify(success=True)
 
 
 def get_item(item_id):
     return next((item for item in items if item["id"] == item_id), None)
+
+
+def update_item(item_id, request):
+    new_name = request.form.get("name")
+    item_to_edit = get_item(item_id)
+    if new_name and item_to_edit:
+        item_to_edit["name"] = new_name
 
 
 if __name__ == "__main__":
