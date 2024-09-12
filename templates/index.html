@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inline Editing with HTMX</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+</head>
+<body>
+    <a href="/alpine">Alpine</a>
+    <h1>Items</h1>
+    <ul>
+        {% for item in items %}
+            {% include 'item.html' %}
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
