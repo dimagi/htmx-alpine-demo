@@ -14,5 +14,15 @@ def index():
     return render_template("index.html", items=items)
 
 
+@app.route("/edit/<int:item_id>", methods=["GET", "POST"])
+def edit_item(item_id):
+    item_to_edit = get_item(item_id)
+    return render_template("edit_item.html", item=item_to_edit)
+
+
+def get_item(item_id):
+    return next((item for item in items if item["id"] == item_id), None)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

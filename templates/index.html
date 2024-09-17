@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 <body>
 <div class="container mx-auto">
@@ -15,7 +16,9 @@
   {% for item in items %}
     <li id="item-{{ item.id }}" class="my-2">
       <span>{{ item.name }}</span>
-      <button class="btn btn-sm btn-outline">
+      <button class="btn btn-sm btn-outline"
+         hx-get="/edit/{{ item.id }}" hx-target="#item-{{ item.id }}" hx-swap="innerHTML"
+      >
         <i class="fa-solid fa-pencil"></i>
       </button>
     </li>
