@@ -16,12 +16,26 @@ def index():
 
 @app.route("/edit/<int:item_id>", methods=["GET", "POST"])
 def edit_item(item_id):
-    item_to_edit = get_item(item_id)
-    return render_template("edit_item.html", item=item_to_edit)
+    if request.method == "POST":
+        template = "item.html"
+        item = update_item(item_id, request)
+    else:
+        template = "edit_item.html"
+        item = get_item(item_id)
+
+    return render_template(template, item=item)
 
 
 def get_item(item_id):
     return next((item for item in items if item["id"] == item_id), None)
+
+
+def update_item(item_id, request):
+    new_name = request.form.get("name")
+    item_to_edit = get_item(item_id)
+    if new_name and item_to_edit:
+        item_to_edit["name"] = new_name
+    return item_to_edit
 
 
 if __name__ == "__main__":
