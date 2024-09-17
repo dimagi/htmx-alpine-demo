@@ -1,4 +1,4 @@
-<form>
+<form hx-post="/edit/{{ item.id }}" hx-target="#item-{{ item.id }}" hx-swap="outerHTML">
     <input type="text" name="name" class="input input-bordered input-sm w-full max-w-xs" value="{{ item.name }}" />
     <button class="btn btn-success btn-sm" type="submit">
       <i class="fa-solid fa-check"></i>
