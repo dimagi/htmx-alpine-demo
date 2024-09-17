@@ -16,7 +16,9 @@
   {% for item in items %}
     <li id="item-{{ item.id }}" class="my-2">
       <span>{{ item.name }}</span>
-      <button class="btn btn-sm btn-outline">
+      <button class="btn btn-sm btn-outline"
+         hx-get="/edit/{{ item.id }}" hx-target="#item-{{ item.id }}" hx-swap="innerHTML"
+      >
         <i class="fa-solid fa-pencil"></i>
       </button>
     </li>
