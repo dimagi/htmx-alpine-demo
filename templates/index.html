@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inline Editing with HTMX</title>
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inline Editing with HTMX</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <a href="/alpine">Alpine</a>
-    <h1>Items</h1>
-    <ul>
-        {% for item in items %}
-            {% include 'item.html' %}
-        {% endfor %}
-    </ul>
+<div class="container mx-auto">
+<h1 class="font-bold text-lg mb-2">TODO</h1>
+<ul class="list-disc">
+  {% for item in items %}
+    <li id="item-{{ item.id }}" class="my-2">
+      <span>{{ item.name }}</span>
+      <button class="btn btn-sm btn-outline">
+        <i class="fa-solid fa-pencil"></i>
+      </button>
+    </li>
+  {% endfor %}
+</ul>
+</div>
 </body>
 </html>
-

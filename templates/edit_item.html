@@ -1,6 +1,0 @@
-<form hx-post="/edit/{{ item.id }}" hx-target="#item-{{ item.id }}" hx-swap="innerHTML" hx-trigger="submit, keyup[Enter]">
-    <input type="text" name="name" value="{{ item.name }}">
-    <button type="submit">Save</button>
-    <button type="cancel"hx-post="/edit/{{ item.id }}" hx-target="#item-{{ item.id }}" hx-swap="innerHTML" hx-params="none">Cancel</button>
-</form>
-
