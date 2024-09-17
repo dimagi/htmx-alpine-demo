@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inline Editing with HTMX</title>
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inline Editing with HTMX</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <a href="/alpine">Alpine</a>
-    <h1>HTMX Items</h1>
-    <ul>
-        {% for item in items %}
-            {% include 'item.html' %}
-        {% endfor %}
-    </ul>
+<div class="container mx-auto">
+<h1 class="font-bold text-lg mb-2">TODO</h1>
+<ul class="list-disc">
+  {% for item in items %}
+    <li id="item-{{ item.id }}">
+      <span>{{ item.name }}</span>
+    </li>
+  {% endfor %}
+</ul>
+</div>
 </body>
 </html>
-

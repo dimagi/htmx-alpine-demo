@@ -12,7 +12,7 @@
 ## GO
 ```shell
 uv venv
-uv pip install flask
+uv pip install -r pyproject.toml
 source venv/bin/activate
 python app.py
 ```
