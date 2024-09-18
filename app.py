@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, make_response
 
 app = Flask(__name__)
 
@@ -31,6 +31,13 @@ def new_item():
     item = {"id": len(items) + 1, "name": "New Item"}
     items.insert(0, item)
     return render_template("item.html", item=item)
+
+
+@app.route("/done/<int:item_id>", methods=["POST"])
+def done_item(item_id):
+    item = get_item(item_id)
+    item["done"] = True
+    return render_template("item_done.html", item=item)
 
 
 def get_item(item_id):

@@ -6,22 +6,42 @@
   <title>Inline Editing with HTMX</title>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 <body>
 <div class="container mx-auto">
-<h1 class="font-bold text-lg mb-2">TODO
-<button class="btn btn-primary btn-sm" hx-post="/new" hx-target="#todo-list" hx-swap="afterbegin">
-  <i class="fa-solid fa-plus"></i>
-</button>
-</h1>
+  <div class="card">
+    <div class="card-body">
+      <h1 class="card-title">TODO
+        <button class="btn btn-primary btn-sm" hx-post="/new" hx-target="#todo-list" hx-swap="afterbegin">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </h1>
 
-<ul class="list-disc" id="todo-list">
-  {% for item in items %}
-    {% include 'item.html' %}
-  {% endfor %}
-</ul>
+      <ul class="list-disc" id="todo-list">
+        {% for item in items %}
+          {% if not item.done %}{% include 'item.html' %}{% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">DONE</h2>
+      <ul class="list-disc" id="done-items">
+        {% for item in items %}
+          {% if item.done %}
+            <li id="item-{{ item.id }}">
+              <span>{{ item.name }}</span>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 </div>
 </body>
 </html>
