@@ -11,8 +11,13 @@
 </head>
 <body>
 <div class="container mx-auto">
-<h1 class="font-bold text-lg mb-2">TODO</h1>
-<ul class="list-disc">
+<h1 class="font-bold text-lg mb-2">TODO
+<button class="btn btn-primary btn-sm" hx-post="/new" hx-target="#todo-list" hx-swap="afterbegin">
+  <i class="fa-solid fa-plus"></i>
+</button>
+</h1>
+
+<ul class="list-disc" id="todo-list">
   {% for item in items %}
     {% include 'item.html' %}
   {% endfor %}

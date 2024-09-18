@@ -26,6 +26,13 @@ def edit_item(item_id):
     return render_template(template, item=item)
 
 
+@app.route("/new", methods=["POST"])
+def new_item():
+    item = {"id": len(items) + 1, "name": "New Item"}
+    items.insert(0, item)
+    return render_template("item.html", item=item)
+
+
 def get_item(item_id):
     return next((item for item in items if item["id"] == item_id), None)
 
