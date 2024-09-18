@@ -1,4 +1,6 @@
-<li id="item-{{ item.id }}">
+<li id="item-{{ item.id }}"
+    {% include 'search_attrs.html' %}
+>
   <span>{{ item.name }}</span>
   <button class="btn btn-sm btn-outline btn-success"
           hx-post="/done/{{ item.id }}" hx-target="#item-{{ item.id }}" hx-swap="outerHTML">

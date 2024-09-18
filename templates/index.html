@@ -13,7 +13,8 @@
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js" defer></script>
 </head>
 <body>
-<div class="container mx-auto">
+<div class="container mx-auto mt-2" x-data="{ search: null }">
+  <input type="text" x-model="search" class="input input-bordered w-full max-w-xs" placeholder="Search...">
   <div class="card">
     <div class="card-body">
       <h1 class="card-title">TODO
@@ -35,7 +36,7 @@
       <ul class="list-disc" id="done-items">
         {% for item in items %}
           {% if item.done %}
-            <li id="item-{{ item.id }}">
+            <li id="item-{{ item.id }}" {% include 'search_attrs.html' %}>
               <span>{{ item.name }}</span>
             </li>
           {% endif %}
