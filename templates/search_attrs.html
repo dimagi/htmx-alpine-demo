@@ -1,9 +1,0 @@
-x-data="{
-  get searchMatch() {
-    if (!this.search) {
-      return true;
-    }
-    return '{{ item.name|lower }}'.includes(this.search.toLowerCase());
-  },
-}"
-x-show="searchMatch"

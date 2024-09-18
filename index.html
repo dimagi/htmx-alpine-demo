@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en" xmlns:int="http://www.w3.org/1999/html">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="reveal/reset.css">
+  <link rel="stylesheet" href="reveal/reveal.css">
+  <link rel="stylesheet" href="reveal/theme/black.css">
+
+  <link rel="stylesheet" href="reveal/plugin/highlight/monokai.css">
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+    <section>
+      <h1 class="">HTMX & Alpine.JS</h1>
+      <p>
+        <small>A tour of the basics</small>
+      </p>
+    </section>
+    <section>
+      <h2>What is HTMX?</h2>
+      <section>
+        <p>A lightweight JavaScript library</p>
+        <p class="fragment">Leverages HTML attributes</p>
+        <p class="fragment">Performs dynamic HTTP requests</p>
+        <p class="fragment">Enables partial updates to web pages</p>
+      </section>
+      <section><img src="images/htmx.png"></section>
+    </section>
+    <section>
+      <h2>Let's build!</h2>
+      <section>
+        <img src="images/shot-1.png">
+      </section>
+      <section>
+        <pre>
+          app.py
+          <code class="hljs python" data-trim>
+            items = [
+                {"id": 1, "name": "Item 1"},
+                {"id": 2, "name": "Item 2"},
+                {"id": 3, "name": "Item 3"},
+            ]
+
+            @app.route("/")
+            def index():
+                return render_template("index.html", items=items)
+          </code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          index.html (the good bits)
+          <code class="hljs Django" data-trim data-line-numbers data-ln-start-from="15">
+            <ul class="list-disc">
+              {% for item in items %}
+                <li id="item-{{ item.id }}">
+                  <span>{{ item.name }}</span>
+                  <button>
+                    <i class="fa-solid fa-pencil"></i>
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          </code>
+        </pre>
+      </section>
+    </section>
+    <section>
+      <h2>Inline editing</h2>
+      <p><small>Load the form</small></p>
+      <section>
+        <img src="images/shot-2.png">
+      </section>
+      <section>
+        <pre>
+          app.py
+          <code class="hljs python" data-trim><script type="text/template">
+            @app.route("/edit/<int:item_id>")
+            def edit(item_id):
+                item = get_item(item_id)
+                return render_template("edit.html", item=item)
+            </script></code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          edit.html
+          <code class="hljs Django" data-trim>
+            <form>
+              <input type="text" name="name" value="{{ item.name }}"/>
+              <button type="submit">
+                <i class="fa-solid fa-check"></i>
+              </button>
+            </form>
+          </code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          index.html
+          <code data-trim>
+            <script src="https://unpkg.com/htmx.org@2.0.2/dist/htmx.min.js"></script>
+          </code>
+        </pre>
+        <pre class="fragment">
+          <code class="hljs Django" data-trim data-line-numbers="4-6"><script type="text/template">
+            <li id="item-{{ item.id }}">
+              <span>{{ item.name }}</span>
+              <button
+                  hx-get="/edit/{{ item.id }}"
+                  hx-target="#item-{{ item.id }}"
+                  hx-swap="innerHTML">
+                <i class="fa-solid fa-pencil"></i>
+              </button>
+            </li>
+          </script></code>
+        </pre>
+      </section>
+    </section>
+    <section>
+      <h2>inline editing</h2>
+      <p><small>Save the form</small></p>
+      <section>
+        <pre>
+          edit_item.html
+          <code class="hljs Django" data-trim data-line-numbers="2-4"><script type="text/template">
+            <form
+                hx-post="/edit/{{ item.id }}"
+                hx-target="#item-{{ item.id }}"
+                hx-swap="outerHTML"
+            >
+              <input type="text" name="name" value="{{ item.name }}"/>
+              <button type="submit">
+                <i class="fa-solid fa-check"></i>
+              </button>
+            </form>
+          </script></code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          app.py
+          <code class="hljs python" data-trim data-line-numbers="2-5|9-14"><script type="text/template">
+          def edit_item(item_id):
+              if request.method == "POST":
+                  item = update_item(item_id, request)
+                  return render_template("item.html", item=item)
+
+              item = get_item(item_id)
+              return render_template("edit_item.html", item=item)
+
+            def update_item(item_id, request):
+              new_name = request.form.get("name")
+              item_to_edit = get_item(item_id)
+              if new_name and item_to_edit:
+                  item_to_edit["name"] = new_name
+              return item_to_edit
+            </script></code>
+        </pre>
+      </section>
+      <section>
+        <p>Extract 'item.html' template</p>
+        <pre>
+          <code class="hljs Django" data-trim data-line-numbers="2">
+            {% for item in items %}
+              {% include 'item.html' %}
+            {% endfor %}
+          </code>
+        </pre>
+      <pre class="fragment">
+        <code class="hljs Django" data-trim><script type="text/template">
+          <li id="item-{{ item.id }}">
+            <span>{{ item.name }}</span>
+            <button
+                hx-get="/edit/{{ item.id }}"
+                hx-target="#item-{{ item.id }}"
+                hx-swap="innerHTML">
+              <i class="fa-solid fa-pencil"></i>
+            </button>
+          </li>
+        </script></code>
+      </pre>
+    </section>
+    </section>
+    <section>
+      <h2>inline editing</h2>
+      <p>
+        <small>Cancel the edit</small><br/>
+        <img src="images/shot-3.png"><br/>
+      </p>
+        <pre>
+          edit_item.html
+          <code class="hljs Django" data-trim data-line-numbers="3-9"><script type="text/template">
+            <form ...>
+              ...
+              <button type="cancel"
+                      hx-post="/edit/{{ item.id }}"
+                      hx-target="#item-{{ item.id }}"
+                      hx-swap="outerHTML"
+                      hx-params="none">
+                <i class="fa-solid fa-times"></i>
+              </button>
+            </form>
+          </script></code>
+        </pre>
+    </section>
+    <section>
+      <h2>New TODOs</h2>
+      <section>
+        <p><img src="images/shot-4.png"></p>
+        <pre>
+          index.html
+          <code data-trim><script type="text/template">
+            <button
+                hx-post="/new"
+                hx-target="#todo-list"
+                hx-swap="afterbegin">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </script></code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          app.py
+          <code class="hljs python" data-trim><script type="text/template">
+            @app.route("/new")
+            def new_item():
+                item = {"id": len(items) + 1, "name": "New Item"}
+                items.insert(0, item)
+                return render_template("item.html", item=item)
+          </script></code>
+        </pre>
+      </section>
+    </section>
+    <section>
+      <h2>Mark Done</h2>
+      <section>
+        <p><img src="images/shot-5.png"> </p>
+      </section>
+      <section>
+        <pre>
+          index.html
+          <code data-trim data-line-numbers="3,6-15" data-ln-start-from="18"><script type="text/template">
+            <ul id="todo-list">
+              {% for item in items %}
+                {% if not item.done %}{% include 'item.html' %}{% endif %}
+              {% endfor %}
+            </ul>
+            <h2>DONE</h2>
+            <ul id="done-items">
+              {% for item in items %}
+                {% if item.done %}
+                  <li id="item-{{ item.id }}">
+                    <span>{{ item.name }}</span>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </script>
+          </code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          item.html
+          <code class="hljs Django" data-trim data-line-numbers="3-8"><script type="text/template">
+            <li id="item-{{ item.id }}">
+              <span>{{ item.name }}</span>
+              <button
+                  hx-post="/done/{{ item.id }}"
+                  hx-target="#item-{{ item.id }}"
+                  hx-swap="outerHTML">
+                <i class="fa-solid fa-check"></i>
+              </button>
+              <button
+                  hx-get="/edit/{{ item.id }}"
+                  hx-target="#item-{{ item.id }}"
+                  hx-swap="innerHTML">
+                <i class="fa-solid fa-pencil"></i>
+              </button>
+            </li>
+          </script></code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          app.py
+          <code class="hljs python" data-trim><script type="text/template">
+           @app.route("/done/<int:item_id>", methods=["POST"])
+            def done_item(item_id):
+                item = get_item(item_id)
+                item["done"] = True
+                return render_template("item_done.html", item=item)
+           </script></code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          item_done.html
+          <code class="hljs Django" data-trim><script type="text/template">
+            <ul hx-swap-oob="beforeend:#done-items">
+              <li id="item-{{ item.id }}">
+                <span>{{ item.name }}</span>
+              </li>
+            </ul>
+          </script></code>
+        </pre>
+      </section>
+    </section>
+    <section>
+      <h2>More HTMX</h2>
+      <section>
+      <div>
+        hx-indicator
+        <pre><code class="hljs html" data-trim><script type="text/template">
+          <div>
+            <button hx-post="/example" hx-indicator="#spinner">
+              Post It!
+            </button>
+            <img id="spinner" class="htmx-indicator" src="/img/bars.svg"/>
+          </div>
+        </script></code></pre>
+      </div>
+      <div class="fragment">
+        hx-disabled-elt
+        <pre><code class="hljs html" data-trim><script type="text/template">
+          <form hx-post="/example"
+                hx-disabled-elt="find input[type='text'], find button">
+            <input type="text" placeholder="Type here...">
+            <button type="submit">Send</button>
+          </form>
+        </script></code></pre>
+      </div>
+    </section>
+    <section>
+      <div>
+        hx-encoding
+        <pre><code class="hljs html" data-trim><script type="text/template">
+          <form hx-encoding="multipart/form-data">...</form>
+        </script></code></pre>
+      </div>
+      <div class="fragment">
+        hx-push-url
+        <pre><code class="hljs html" data-trim><script type="text/template">
+          <div hx-get="/account" hx-push-url="true">
+            Go to My Account
+          </div>
+        </script></code></pre>
+      </div>
+      <div class="fragment">
+        hx-trigger
+        <pre><code class="hljs html" data-trim><script type="text/template">
+          <form hx-post="/example" hx-trigger="submit, keyup[Enter]">
+          </form>
+        </script></code></pre>
+      </div>
+    </section>
+    </section>
+    <section>
+      <h2>Alpine.Js</h2>
+      <p>Let's add some client side interactivity</p>
+    </section>
+    <section>
+      <h2>Dynamic Form Elements</h2>
+      <section>
+        <img src="images/shot-6.png">
+      </section>
+      <section>
+        <pre>
+          edit_form.html
+          <code class="hljs Django" data-trim data-line-numbers="3-6"><script type="text/template">
+            <form ...>
+              <input type="text" name="name" value="{{ item.name }}" />
+              <div class="form-control">
+                <span class="label-text">Are you the Muffin Man?</span>
+                <input type="checkbox" class="checkbox"/>
+              </div>
+              ...
+            </form>
+          </script></code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          edit_form.html
+          <code class="hljs Django" data-trim data-line-numbers="2-4,7"><script type="text/template">
+            <form
+              x-data="{
+                name: '{{ item.name }}',
+              }"
+            >
+              <input type="text" name="name" value="{{ item.name }}"
+                x-model="name"
+              />
+              <div class="form-control">
+                  <span class="label-text">Are you the Muffin Man?</span>
+                  <input type="checkbox" class="checkbox"/>
+              </div>
+            </form>
+          </script></code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          edit_form.html
+          <code class="hljs Django" data-trim data-line-numbers="3-5,9"><script type="text/template">
+            <form x-data="{
+                name: '{{ item.name }}',
+                get showMuffin() {
+                  return this.name.toLowerCase().includes('muffin');
+                }
+              }"
+            >
+              <input type="text" name="name" value="{{ item.name }}" x-model="name"/>
+              <div class="form-control" x-show="showMuffin">
+                  <span class="label-text">Are you the Muffin Man?</span>
+                  <input type="checkbox" class="checkbox"/>
+              </div>
+            </form>
+          </script></code>
+        </pre>
+      </section>
+    </section>
+    <section>
+      <h2>Client side search</h2>
+      <section>
+        <img src="images/shot-7.png">
+      </section>
+      <section>
+        <pre>
+          index.html
+          <code class="hljs Django" data-trim><script type="text/template">
+            <div x-data="{ search: null }">
+              <input type="text" x-model="search" placeholder="Search..."/>
+              ...
+            </div>
+          </script>
+          </code>
+        </pre>
+      </section><section>
+        <pre>
+          item.html
+          <code class="hljs Django" data-trim data-line-numbers="3-10|12"><script type="text/template">
+            <li id="item-{{ item.id }}"
+                x-data="{
+                  get showItem() {
+                    if (!this.search) {
+                      return true;
+                    }
+                    return '{{ item.name|lower }}'.includes(
+                      this.search.toLowerCase()
+                    );
+                  },
+                }"
+                x-show="showItem"
+            >
+              ...
+            </li>
+          </script>
+          </code>
+        </pre>
+      </section>
+    </section>
+    <section>
+      <h2>What else?</h2>
+      <section>
+        <div>
+          x-data (extracted)
+          <pre><code class="hljs html" data-trim>
+            <div x-data="dropdown">
+              <button @click="open = !open">Toggle Content</button>
+              <div x-show="open">Content...</div>
+            </div>
+
+            <script>
+              document.addEventListener('alpine:init', () => {
+                Alpine.data('dropdown', () => ({
+                    open: false,
+                }))
+              })
+            </script>
+          </code></pre>
+        </div>
+      </section>
+      <section>
+        <div>
+          x-bind
+          <pre><code class="hljs html"><div x-bind:class="selected ? 'highlight' : '' "></div></code></pre>
+        </div>
+        <div class="fragment">
+          x-on
+          <pre><code class="hljs html"><button x-on:click="alert('Hello World!')">Say Hi</button></code></pre>
+        </div>
+        <div class="fragment">
+          x-for
+          <pre><code class="hljs html" data-trim>
+            <ul x-data="{ colors: ['Red', 'Orange', 'Yellow'] }">
+              <template x-for="color in colors">
+                <li x-text="color"></li>
+              </template>
+            </ul>
+          </code></pre>
+        </div>
+      </section>
+    </section>
+    <section>
+      <h2>Magics</h2>
+      <section>
+      <div class="fragment">
+        $el
+        <pre><code class="hljs html" data-trim>
+          <button @click="$el.innerHTML = 'Hi!'">Click Me</button>
+        </code></pre>
+      </div>
+      <div class="fragment">
+        $refs
+        <pre><code class="hljs html" data-trim>
+          <button @click="$refs.text.remove()">Remove Text</button>
+          <span x-ref="text">Hello 👋</span>
+        </code></pre>
+      </div>
+      <div class="fragment">
+        $watch
+        <pre><code class="hljs html" data-trim><script type="text/template">
+          <div x-data="{ open: false }"
+               x-init="$watch('open', (value, oldValue) => {...})">
+            <button @click="open = ! open">Toggle Open</button>
+          </div>
+        </script></code></pre>
+      </div>
+    </section>
+    <section>
+      <div>
+        $store
+        <pre><code class="hljs html" data-trim>
+          <button x-data @click="$store.darkMode.toggle()">
+            Toggle Dark Mode
+          </button>
+
+          <div x-data :class="$store.darkMode.on && 'bg-black'">
+            ...
+          </div>
+
+          <script>
+            document.addEventListener('alpine:init', () => {
+              Alpine.store('darkMode', {
+                on: false,
+                toggle() {
+                  this.on = ! this.on
+                }
+              })
+            })
+          </script>
+        </code></pre>
+      </div>
+    </section>
+  </section>
+  <section>
+    <h2>Thank you!</h2>
+    <p>Questions?</p>
+  </section>
+  </div>
+</div>
+
+<script src="reveal/reveal.js"></script>
+<script src="reveal/plugin/highlight/highlight.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+
+    plugins: [RevealHighlight]
+  });
+</script>
+</body>
+</html>
