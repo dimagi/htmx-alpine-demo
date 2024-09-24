@@ -211,7 +211,19 @@
       <h2>New TODOs</h2>
       <section>
         <p><img src="images/shot-4.png"></p>
-        <pre>
+      </section>
+      <section>
+        <pre class="fragment">
+          app.py
+          <code class="hljs python" data-trim><script type="text/template">
+            @app.route("/new")
+            def new_item():
+                item = {"id": len(items) + 1, "name": "New Item"}
+                items.insert(0, item)
+                return render_template("item.html", item=item)
+          </script></code>
+        </pre>
+        <pre class="fragment">
           index.html
           <code data-trim><script type="text/template">
             <button
@@ -220,18 +232,6 @@
                 hx-swap="afterbegin">
               <i class="fa-solid fa-plus"></i>
             </button>
-          </script></code>
-        </pre>
-      </section>
-      <section>
-        <pre>
-          app.py
-          <code class="hljs python" data-trim><script type="text/template">
-            @app.route("/new")
-            def new_item():
-                item = {"id": len(items) + 1, "name": "New Item"}
-                items.insert(0, item)
-                return render_template("item.html", item=item)
           </script></code>
         </pre>
       </section>
@@ -266,6 +266,18 @@
       </section>
       <section>
         <pre>
+          app.py
+          <code class="hljs python" data-trim><script type="text/template">
+           @app.route("/done/<int:item_id>", methods=["POST"])
+            def done_item(item_id):
+                item = get_item(item_id)
+                item["done"] = True
+                return render_template("item_done.html", item=item)
+           </script></code>
+        </pre>
+      </section>
+      <section>
+        <pre>
           item.html
           <code class="hljs Django" data-trim data-line-numbers="3-8"><script type="text/template">
             <li id="item-{{ item.id }}">
@@ -284,18 +296,6 @@
               </button>
             </li>
           </script></code>
-        </pre>
-      </section>
-      <section>
-        <pre>
-          app.py
-          <code class="hljs python" data-trim><script type="text/template">
-           @app.route("/done/<int:item_id>", methods=["POST"])
-            def done_item(item_id):
-                item = get_item(item_id)
-                item["done"] = True
-                return render_template("item_done.html", item=item)
-           </script></code>
         </pre>
       </section>
       <section>
@@ -362,7 +362,9 @@
     </section>
     <section>
       <h2>Alpine.Js</h2>
-      <p>Let's add some client side interactivity</p>
+      <p class="fragment">A minimal tool for composing behavior in HTML markup</p>
+      <p class="fragment">A collection of 15 attributes, 6 properties, and 2 methods.</p>
+      <p class="fragment">Let's add some client side interactivity</p>
     </section>
     <section>
       <h2>Dynamic Form Elements</h2>
